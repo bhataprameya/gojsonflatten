@@ -571,6 +571,88 @@ func TestFlattenWithVaryingDepth(t *testing.T) {
 			RailsStyle,
 			5,
 		},
+		// Test data for depth 2 with array
+		{
+			// JSON input
+			`{
+				"foo": {
+					"jim":"bean"
+				},
+				"fee": "bar",
+				"n1": {
+					"alist": [
+						"a",
+						"b",
+						"c",
+						{
+							"d": "other",
+							"e": "another"
+						}
+					]
+				},
+				"number": 1.4567,
+				"bool":   true
+			}`,
+			// Expected flattened result
+			map[string]interface{}{
+				"foo.jim":    "bean",
+				"fee":        "bar",
+				"n1.alist.0": "a",
+				"n1.alist.1": "b",
+				"n1.alist.2": "c",
+				"n1.alist.3": map[string]interface{}{
+					"d": "other",
+					"e": "another",
+				},
+				"number": 1.4567,
+				"bool":   true,
+			},
+			// Prefix, SeparatorStyle, and depth
+			"",
+			DotStyle,
+			2,
+		},
+		// Test data for depth 2 with array and prefix
+		{
+			// JSON input
+			`{
+				"foo": {
+					"jim":"bean"
+				},
+				"fee": "bar",
+				"n1": {
+					"alist": [
+						"a",
+						"b",
+						"c",
+						{
+							"d": "other",
+							"e": "another"
+						}
+					]
+				},
+				"number": 1.4567,
+				"bool":   true
+			}`,
+			// Expected flattened result
+			map[string]interface{}{
+				"aa_foo.jim":    "bean",
+				"aa_fee":        "bar",
+				"aa_n1.alist.0": "a",
+				"aa_n1.alist.1": "b",
+				"aa_n1.alist.2": "c",
+				"aa_n1.alist.3": map[string]interface{}{
+					"d": "other",
+					"e": "another",
+				},
+				"aa_number": 1.4567,
+				"aa_bool":   true,
+			},
+			// Prefix, SeparatorStyle, and depth
+			"aa_",
+			DotStyle,
+			2,
+		},
 	}
 
 	for i, test := range cases {

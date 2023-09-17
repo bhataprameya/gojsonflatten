@@ -1,4 +1,4 @@
-# Json Flatten Library
+# Json & Map Flatten Library
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/jeremywohl/flatten.svg)](https://pkg.go.dev/github.com/bhataprameya/gojsonflatten)
 

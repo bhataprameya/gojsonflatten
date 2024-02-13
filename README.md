@@ -11,6 +11,7 @@ Flatten is a Go library that simplifies the process of converting arbitrarily ne
 - Support various key styles: dotted, path-like, Rails, or underscores.
 - Define custom key styles to suit your needs.
 - Works with both JSON strings and Go structures.
+- Ability to flatten only maps and not arrays.
 
 ## Installation
 
@@ -79,6 +80,67 @@ flat, err := gojsonflatten.Flatten(nested, "", flatten.RailsStyle, 3)
 //   "c[f]": "g",
 //   "z":    1.4567,
 // }
+```
+
+### Flatten Go Maps without Arrays--------------------------------TEST
+
+You can also flatten Go maps while preserving arrays as it is like this::
+
+```GO
+
+import (
+    "github.com/bhataprameya/gojsonflatten"
+)
+
+nested := map[string]interface{}{
+   "a": "b",
+   "c": map[string]interface{}{
+       "d": "e",
+       "f": "g",
+   },
+   "z": []interface{}{"one", "two"},
+}
+
+flat, err := gojsonflatten.FlattenNoArray(nested, "", flatten.RailsStyle, 3)
+
+// Output:
+// {
+//   "a":    "b",
+//   "c[d]": "e",
+//   "c[f]": "g",
+//   "z":    []interface{}{"one", "two"}
+// }
+
+
+```
+
+### Flatten JSON Strings without Arrays
+
+You can flatten JSON strings while preserving arrays using FlattenNoArray:
+
+```GO
+import (
+    "github.com/bhataprameya/gojsonflatten"
+)
+
+nested := `{
+  "one": {
+    "two": [
+      "2a",
+      "2b"
+    ]
+  },
+  "side": "value"
+}`
+
+flat, err := gojsonflatten.FlattenStringNoArray(nested, "", flatten.DotStyle, -1)
+
+// Output:
+// {
+//   "one.two": ["2a", "2b"],
+//   "side": "value"
+// }
+
 ```
 
 ## Custom Key Style

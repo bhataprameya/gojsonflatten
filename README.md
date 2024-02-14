@@ -145,7 +145,7 @@ flat, err := gojsonflatten.FlattenStringNoArray(nested, "", flatten.DotStyle, -1
 
 You can even define a custom key style for flattening:
 
-```go
+```GO
 import (
     "github.com/bhataprameya/gojsonflatten"
 )
@@ -165,7 +165,7 @@ flat, err := gojsonflatten.FlattenString(nested, "", doubleDash, 5)
 
 You can even define a custom key style for flattening:
 
-```go
+```GO
 import (
     "github.com/bhataprameya/gojsonflatten"
 )

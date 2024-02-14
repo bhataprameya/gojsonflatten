@@ -110,8 +110,6 @@ flat, err := gojsonflatten.FlattenNoArray(nested, "", flatten.RailsStyle, 3)
 //   "c[f]": "g",
 //   "z":    []interface{}{"one", "two"}
 // }
-
-
 ```
 
 ### Flatten JSON Strings without Arrays

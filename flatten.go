@@ -32,6 +32,26 @@ var (
 
 // Flatten generates a flat map from a nested map with a specified depth.
 func Flatten(nested map[string]interface{}, prefix string, style SeparatorStyle, depth int) (map[string]interface{}, error) {
+	return flattenInternal(nested, prefix, style, depth, false)
+}
+
+// FlattenString generates a flat JSON map from a nested JSON string with a specified depth.
+func FlattenString(nestedString, prefix string, style SeparatorStyle, depth int) (string, error) {
+	return flattenStringInternal(nestedString, prefix, style, depth, false)
+}
+
+// FlattenNoArray generates a flat map from a nested map with a specified depth, preserving arrays as strings.
+func FlattenNoArray(nested map[string]interface{}, prefix string, style SeparatorStyle, depth int) (map[string]interface{}, error) {
+	return flattenInternal(nested, prefix, style, depth, true)
+}
+
+// FlattenStringNoArray generates a flat JSON map from a nested JSON string with a specified depth, preserving arrays as strings.
+func FlattenStringNoArray(nestedString, prefix string, style SeparatorStyle, depth int) (string, error) {
+	return flattenStringInternal(nestedString, prefix, style, depth, true)
+}
+
+// flattenInternal generates a flat map from a nested map with a specified depth, optionally preserving arrays as strings.
+func flattenInternal(nested map[string]interface{}, prefix string, style SeparatorStyle, depth int, preserveArray bool) (map[string]interface{}, error) {
 	if depth == 0 {
 		return nested, nil
 	} else if depth > 0 {
@@ -39,7 +59,7 @@ func Flatten(nested map[string]interface{}, prefix string, style SeparatorStyle,
 	}
 
 	flatmap := make(map[string]interface{})
-	err := flatten(true, flatmap, nested, prefix, style, depth)
+	err := flatten(true, flatmap, nested, prefix, style, depth, preserveArray)
 	if err != nil {
 		return nil, err
 	}
@@ -47,8 +67,8 @@ func Flatten(nested map[string]interface{}, prefix string, style SeparatorStyle,
 	return flatmap, nil
 }
 
-// FlattenString generates a flat JSON map from a nested JSON string with a specified depth.
-func FlattenString(nestedString, prefix string, style SeparatorStyle, depth int) (string, error) {
+// flattenStringInternal generates a flat JSON map from a nested JSON string with a specified depth, optionally preserving arrays as strings.
+func flattenStringInternal(nestedString, prefix string, style SeparatorStyle, depth int, preserveArray bool) (string, error) {
 	if !isJsonMap.MatchString(nestedString) {
 		return "", ErrNotValidJsonInput
 	}
@@ -59,7 +79,7 @@ func FlattenString(nestedString, prefix string, style SeparatorStyle, depth int)
 		return "", err
 	}
 
-	flatmap, err := Flatten(nested, prefix, style, depth)
+	flatmap, err := flattenInternal(nested, prefix, style, depth, preserveArray)
 	if err != nil {
 		return "", err
 	}
@@ -73,7 +93,7 @@ func FlattenString(nestedString, prefix string, style SeparatorStyle, depth int)
 }
 
 // flatten recursively processes nested structures and flattens them.
-func flatten(top bool, flatMap map[string]interface{}, nested interface{}, prefix string, style SeparatorStyle, depth int) error {
+func flatten(top bool, flatMap map[string]interface{}, nested interface{}, prefix string, style SeparatorStyle, depth int, keepArrays bool) error {
 	if depth == 0 {
 		// If the desired depth is reached, add the prefix and nested value to the flat map.
 		flatMap[prefix] = nested
@@ -85,7 +105,7 @@ func flatten(top bool, flatMap map[string]interface{}, nested interface{}, prefi
 		switch v.(type) {
 		case map[string]interface{}, []interface{}:
 			// If the value is a nested map or slice, continue flattening recursively.
-			if err := flatten(false, flatMap, v, newKey, style, depth-1); err != nil {
+			if err := flatten(false, flatMap, v, newKey, style, depth-1, keepArrays); err != nil {
 				return err
 			}
 		default:
@@ -104,10 +124,14 @@ func flatten(top bool, flatMap map[string]interface{}, nested interface{}, prefi
 			assign(newKey, v)
 		}
 	case []interface{}:
-		for i, v := range nested {
-			newKey := enkey(top, prefix, strconv.Itoa(i), style)
-			// Process and assign the index-value pair.
-			assign(newKey, v)
+		if !keepArrays {
+			for i, v := range nested {
+				newKey := enkey(top, prefix, strconv.Itoa(i), style)
+				// Process and assign the index-value pair.
+				assign(newKey, v)
+			}
+		} else {
+			flatMap[prefix] = nested
 		}
 	default:
 		return ErrNotValidInput

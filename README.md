@@ -82,7 +82,7 @@ flat, err := gojsonflatten.Flatten(nested, "", flatten.RailsStyle, 3)
 // }
 ```
 
-### Flatten Go Maps without Arrays--------------------------------TEST
+### Flatten Go Maps without Arrays
 
 You can also flatten Go maps while preserving arrays as it is like this::
 

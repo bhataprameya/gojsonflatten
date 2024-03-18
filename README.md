@@ -1,6 +1,8 @@
-# Json & Map Flatten Library
-
 [![Go Reference](https://pkg.go.dev/badge/github.com/jeremywohl/flatten.svg)](https://pkg.go.dev/github.com/bhataprameya/gojsonflatten)
+[![Go Report Card](https://goreportcard.com/badge/gojp/goreportcard)](https://goreportcard.com/report/github.com/bhataprameya/gojsonflatten) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/bhataprameya/gojsonflatten/blob/main/LICENSE)
+
+# Json & Map Flatten Library
 
 Flatten is a Go library that simplifies the process of converting arbitrarily nested JSON structures into flat, one-dimensional maps. It offers flexibility in how you want to format the flattened keys, supporting default styles such as dotted, path-like, Rails, or underscores, or even allowing you to define your custom style. Whether you're working with JSON strings or Go structures, Flatten can handle it all, and you can specify the depth to flatten, from flattening any depth (-1) to a specific level.
 
